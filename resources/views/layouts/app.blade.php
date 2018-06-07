@@ -52,7 +52,7 @@
                             </li>
                         @else
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ route('appointments.index') }}">{{ __('Todos') }}</a>
+                                <a class="nav-link" href="{{ route('appointments.index') }}">{{ __('Appointments') }}</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="{{ route('todos.index') }}">{{ __('Todos') }}</a>
