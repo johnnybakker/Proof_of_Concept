@@ -3,83 +3,88 @@
 namespace App\Http\Controllers;
 
 use App\Appointment;
+use \Auth;
 use Illuminate\Http\Request;
 
 class AppointmentController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+    public function __construct()
+    {
+       $this->middleware('auth');
+    }
+
     public function index()
     {
-        //
+        $appointments = Appointment::where('user_id', Auth::id())->get();
+        return view("appointments.index")->with('appointments', $appointments);
     }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function create()
     {
-        //
+        return view("appointments.create");
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'title' => 'required',
+            'start_datetime' => 'required',
+            'end_datetime' => 'required',
+            'zipcode' => 'required',
+            'address' => 'required',
+            'city' => 'required'
+        ]);
+        
+        $appointment = new Appointment();
+        $appointment->user_id = Auth::id();
+        $appointment->title = $request->get('title');
+        $appointment->start_datetime = $request->get('start_datetime');
+        $appointment->end_datetime = $request->get('end_datetime');
+        $appointment->zipcode = $request->get('zipcode');
+        $appointment->address = $request->get('address');
+        $appointment->city = $request->get('city');
+        $appointment->description = $request->get('description');
+        $appointment->save();
+
+        return redirect(route('appointments.index'));
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Appointment  $appointment
-     * @return \Illuminate\Http\Response
-     */
     public function show(Appointment $appointment)
     {
-        //
+        return view("appointments.show")->with('appointment', $appointment);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Appointment  $appointment
-     * @return \Illuminate\Http\Response
-     */
     public function edit(Appointment $appointment)
     {
-        //
+        return view("appointments.edit")->with('appointment', $appointment);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Appointment  $appointment
-     * @return \Illuminate\Http\Response
-     */
     public function update(Request $request, Appointment $appointment)
     {
-        //
+
+        $request->validate([
+            'title' => 'required',
+            'start_datetime' => 'required',
+            'end_datetime' => 'required',
+            'zipcode' => 'required',
+            'address' => 'required',
+            'city' => 'required'
+        ]);
+
+        $appointment->title = $request->get('title');
+        $appointment->start_datetime = $request->get('start_datetime');
+        $appointment->end_datetime = $request->get('end_datetime');
+        $appointment->zipcode = $request->get('zipcode');
+        $appointment->address = $request->get('address');
+        $appointment->city = $request->get('city');
+        $appointment->description = $request->get('description');
+        $appointment->save();
+
+        return redirect(route('appointments.index'));
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Appointment  $appointment
-     * @return \Illuminate\Http\Response
-     */
     public function destroy(Appointment $appointment)
     {
-        //
+        $appointment->delete();
+        return redirect(route('appointments.index'));
     }
 }
