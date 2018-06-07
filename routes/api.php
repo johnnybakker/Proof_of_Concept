@@ -17,7 +17,9 @@ Route::get('appointments/{id}', function($id) {
 });
 
 Route::post('appointments', function(Request $request) {
-    return Appointment::create($request->all);
+    $appointment = $request->all();
+    unset($appointment->key);
+    return Appointment::create($appointment);
 });
 
 Route::put('appointments/{id}', function(Request $request, $id) {
