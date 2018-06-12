@@ -1,8 +1,7 @@
 <?php
 
 use Illuminate\Http\Request;
-Use App\Appointment;
- 
+use App\Appointment;
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
@@ -17,15 +16,46 @@ Route::get('appointments/{id}', function($id) {
 });
 
 Route::post('appointments', function(Request $request) {
-    $appointment = $request->all();
-    unset($appointment->key);
-    return Appointment::create($appointment);
+    $appointment = new Appointment();
+
+    $appointment->user_id = $request->get('user_id');
+    $appointment->title = $request->get('title');
+    $appointment->start_datetime = $request->get('start_datetime');
+    $appointment->end_datetime = $request->get('end_datetime');
+    $appointment->zipcode = $request->get('zipcode');
+    $appointment->address = $request->get('address');
+    $appointment->city = $request->get('city');
+    $appointment->description = $request->get('description');
+
+    if($appointment->isValid())
+    {
+        return Appointment::create($appointment);
+    }
+    else {
+        info('Je kan niet 2 afspraken op dezelfde datum hebben...');
+    }
 });
 
 Route::put('appointments/{id}', function(Request $request, $id) {
     $appointment = Appointment::findOrFail($id);
-    $appointment->update($request->all());
+    $validator = Validator::make($request->all(), $appointment->rules());
 
+    if ($validator->fails())
+    {
+        info('You are missing required fields.');
+    }
+    else 
+    {
+        if($appointment->isValid())
+        {
+            $appointment->update($request->all());
+        }
+        else
+        {
+            info('Je kan niet 2 afspraken op dezelfde datum hebben...');
+        }
+    }
+    
     return $appointment;
 });
 
