@@ -76,6 +76,12 @@ return [
             'driver' => 'errorlog',
             'level' => 'debug',
         ],
+
+        'accesslog' => [
+            'driver' => 'single',
+            'path' => storage_path('app/access.log'),
+            'level' => 'info',
+        ]
     ],
 
 ];
