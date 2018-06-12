@@ -9,9 +9,10 @@ use Illuminate\Http\Request;
 class TodoController extends Controller
 {
 
-    public function __construct()
+    public function __construct(Request $request)
     {
        $this->middleware('auth');
+       $this->middleware('role:admin');
     }
 
     public function index()
