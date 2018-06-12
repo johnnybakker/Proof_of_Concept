@@ -1,7 +1,8 @@
 <?php
 
 use Illuminate\Http\Request;
-Use App\Appointment;
+use App\Appointment;
+use Validator;
  
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {
