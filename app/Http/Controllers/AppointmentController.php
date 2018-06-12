@@ -52,7 +52,7 @@ class AppointmentController extends Controller
             }
             else {
                 return redirect(route('appointments.create'))
-                ->withErrors(["Je kan niet 2 afspraken hebben op dezelfde tijd..."])
+                ->withErrors(["Je kan niet 2 afspraken op dezelfde datum hebben..."])
                 ->withInput();
             }
             
