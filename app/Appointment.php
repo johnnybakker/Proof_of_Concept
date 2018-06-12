@@ -2,6 +2,7 @@
 
 namespace App;
 
+use \Auth;
 use Illuminate\Database\Eloquent\Model;
 
 class Appointment extends Model
@@ -21,4 +22,17 @@ class Appointment extends Model
 
         return $rules;
     }  
+
+    public function isValid() {
+        $appointments = Appointment::where('user_id', Auth::id())->where('start_datetime', $this->start_datetime)->get();
+
+        
+        if (sizeof($appointments) > 0)
+        {
+            return false;
+        }
+        else {
+            return true;
+        }
+    }
 }

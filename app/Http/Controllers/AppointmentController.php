@@ -46,7 +46,16 @@ class AppointmentController extends Controller
             $appointment->address = $request->get('address');
             $appointment->city = $request->get('city');
             $appointment->description = $request->get('description');
-            $appointment->save();
+            
+            if($appointment->isValid()) {
+                $appointment->save();
+            }
+            else {
+                return redirect(route('appointments.create'))
+                ->withErrors(["Je kan niet 2 afspraken hebben op dezelfde tijd..."])
+                ->withInput();
+            }
+            
 
             return redirect(route('appointments.index'));
         }
