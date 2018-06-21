@@ -25,9 +25,9 @@ class Appointment extends Model
 
     public function isValid() {        
         if(isset($this["id"]))
-            $appointments = Appointment::where('id', "!=" , $this->id)->where('user_id', $this->user_id)->where('start_datetime', $this->start_datetime)->get();    
+            $appointments = Appointment::where('id', "!=" , $this->id)->where('user_id', $this->user_id)->whereRaw('DATE(start_datetime) = DATE(?)', [$this->start_datetime])->get();    
         else
-            $appointments = Appointment::where('user_id', $this->user_id)->where('start_datetime', $this->start_datetime)->get();    
+            $appointments = Appointment::where('user_id', $this->user_id)->whereRaw('DATE(start_datetime) = DATE(?)', [$this->start_datetime])->get();    
         if (sizeof($appointments) > 0)
         {
             return false;
