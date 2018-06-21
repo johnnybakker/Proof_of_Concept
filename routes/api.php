@@ -3,9 +3,7 @@
 use Illuminate\Http\Request;
 use App\Appointment;
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
-});
+Route::middleware('auth:api');
 
 Route::get('appointments', function() {
     return Appointment::all();
@@ -27,12 +25,21 @@ Route::post('appointments', function(Request $request) {
     $appointment->city = $request->get('city');
     $appointment->description = $request->get('description');
 
-    if($appointment->isValid())
+    $validator = Validator::make($request->all(), $appointment->rules());
+    if ($validator->fails())
     {
-        return Appointment::create($appointment);
+        return 'You are missing required fields.';
     }
-    else {
-        info('Je kan niet 2 afspraken op dezelfde datum hebben...');
+    else 
+    {
+        if($appointment->isValid())
+        {
+            $appointment->save();
+            return $appointment;
+        }
+        else {
+            return "Je kan niet 2 afspraken op dezelfde datum hebben...";
+        }
     }
 });
 
@@ -42,17 +49,18 @@ Route::put('appointments/{id}', function(Request $request, $id) {
 
     if ($validator->fails())
     {
-        info('You are missing required fields.');
+        return 'You are missing required fields.';
     }
     else 
     {
         if($appointment->isValid())
         {
+            unset($request["key"]);
             $appointment->update($request->all());
         }
         else
         {
-            info('Je kan niet 2 afspraken op dezelfde datum hebben...');
+            return 'Je kan niet 2 afspraken op dezelfde datum hebben...';
         }
     }
     

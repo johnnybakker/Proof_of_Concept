@@ -24,8 +24,7 @@ class Appointment extends Model
     }  
 
     public function isValid() {
-        $appointments = Appointment::where('user_id', Auth::id())->whereRaw('DATE(start_datetime) = DATE(?)', [$this->start_datetime])->get();
-        
+        $appointments = Appointment::where('user_id', $this->user_id)->where('start_datetime', $this->start_datetime)->get();    
         if (sizeof($appointments) > 0)
         {
             return false;
