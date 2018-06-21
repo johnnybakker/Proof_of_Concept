@@ -47,22 +47,14 @@ Route::put('appointments/{id}', function(Request $request, $id) {
     $appointment = Appointment::findOrFail($id);
     $validator = Validator::make($request->all(), $appointment->rules());
 
-    if ($validator->fails())
-    {
-        return 'You are missing required fields.';
+    foreach($request->all() as $key => $val){
+        if(isset($appointment[$key])) $appointment[$key] = $val;
     }
-    else 
-    {
-        if($appointment->isValid())
-        {
-            unset($request["key"]);
-            $appointment->update($request->all());
-        }
-        else
-        {
-            return 'Je kan niet 2 afspraken op dezelfde datum hebben...';
-        }
-    }
+
+    if($appointment->isValid())
+        $appointment->save();
+    else
+        return 'Je kan niet 2 afspraken op dezelfde datum hebben...';
     
     return $appointment;
 });
