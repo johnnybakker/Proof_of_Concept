@@ -75,25 +75,34 @@ class AppointmentController extends Controller
 
     public function update(Request $request, Appointment $appointment)
     {
+        $validator = Validator::make($request->all(), $appointment->rules());
 
-        $request->validate([
-            'title' => 'required',
-            'start_datetime' => 'required',
-            'end_datetime' => 'required',
-            'zipcode' => 'required',
-            'address' => 'required',
-            'city' => 'required'
-        ]);
+        if ($validator->fails()) {
+            return redirect(route('appointments.edit', $appointment->id))
+                ->withErrors($validator)
+                ->withInput();
+        }
+        else
+        {
+            $appointment->title = $request->get('title');
+            $appointment->start_datetime = $request->get('start_datetime');
+            $appointment->end_datetime = $request->get('end_datetime');
+            $appointment->zipcode = $request->get('zipcode');
+            $appointment->address = $request->get('address');
+            $appointment->city = $request->get('city');
+            $appointment->description = $request->get('description');
 
-        $appointment->title = $request->get('title');
-        $appointment->start_datetime = $request->get('start_datetime');
-        $appointment->end_datetime = $request->get('end_datetime');
-        $appointment->zipcode = $request->get('zipcode');
-        $appointment->address = $request->get('address');
-        $appointment->city = $request->get('city');
-        $appointment->description = $request->get('description');
-        $appointment->save();
-
+            if($appointment->isValid())
+            {
+                $appointment->save();
+            }
+            else {
+                return redirect(route('appointments.edit', $appointment->id))
+                ->withErrors(["Je kan niet 2 afspraken op dezelfde datum hebben..."])
+                ->withInput();
+            }
+        }
+        
         return redirect(route('appointments.index'));
     }
 
